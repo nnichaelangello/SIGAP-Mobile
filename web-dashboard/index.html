@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SIGAP Dashboard - Sistem Informasi dan Gerakan Anti Pelecehan Seksual">
+  <title>SIGAP Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <!-- ═══════════════════════════════════════ -->
+  <!-- LOGIN SCREEN -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-container">
+      <div class="login-brand">
+        <div class="login-logo">
+          <svg viewBox="0 0 48 48" fill="none">
+            <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="2.5"/>
+            <path d="M16 26c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="24" cy="18" r="3" fill="currentColor"/>
+            <path d="M24 30v6M20 36h8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h1>SIGAP</h1>
+        <p>Sistem Informasi &amp; Gerakan Anti Pelecehan</p>
+      </div>
+      <form id="login-form" class="login-form">
+        <div class="form-group">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" placeholder="admin@sigap.id" required autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        <button type="submit" id="login-btn" class="btn-primary btn-full">
+          <span class="btn-text">Masuk ke Dashboard</span>
+          <span class="btn-loader" style="display:none;">
+            <span class="spinner"></span> Memproses...
+          </span>
+        </button>
+        <p id="login-error" class="login-error" style="display:none;"></p>
+      </form>
+      <div class="login-footer">
+        <p>Server: <span id="server-status" class="status-dot offline"></span> <span id="server-url-display">Belum dikonfigurasi</span></p>
+        <button type="button" class="btn-link" onclick="showServerConfig()">⚙ Konfigurasi Server</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- DASHBOARD -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="dashboard" class="dashboard" style="display:none;">
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 32 32" fill="none">
+            <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2"/>
+            <circle cx="16" cy="12" r="2.5" fill="currentColor"/>
+            <path d="M12 18c0-2.2 1.8-4 4-4s4 1.8 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="brand-name">SIGAP</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" data-page="overview" id="nav-overview">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          <span>Overview</span>
+        </a>
+        <a href="#" class="nav-item" data-page="users" id="nav-users">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Pengguna</span>
+        </a>
+        <a href="#" class="nav-item" data-page="reports" id="nav-reports">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span>Laporan</span>
+          <span id="report-badge" class="nav-badge" style="display:none;">0</span>
+        </a>
+        <a href="#" class="nav-item" data-page="emergency" id="nav-emergency">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span>Darurat</span>
+          <span id="emergency-badge" class="nav-badge urgent" style="display:none;">0</span>
+        </a>
+        <a href="#" class="nav-item" data-page="appointments" id="nav-appointments">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>Janji Temu</span>
+          <span id="appointment-badge" class="nav-badge" style="display:none;">0</span>
+        </a>
+        <a href="#" class="nav-item" data-page="pantau" id="nav-pantau">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Pantauan</span>
+        </a>
+        <a href="#" class="nav-item" data-page="database" id="nav-database">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          <span>Database</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="user-avatar">A</div>
+          <div class="user-details">
+            <span class="user-name" id="user-name">Admin</span>
+            <span class="user-role" id="user-role">Administrator</span>
+          </div>
+        </div>
+        <button class="btn-logout" id="btn-logout" title="Logout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <button class="btn-menu" id="btn-menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="topbar-title">
+          <h2 id="page-title">Overview</h2>
+          <span class="topbar-date" id="topbar-date"></span>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn-icon" id="btn-refresh" title="Refresh Data">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          </button>
+          <div class="server-indicator">
+            <span class="pulse-dot" id="server-pulse"></span>
+            <span id="server-info">Server Online</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- SOS ALERT BAR — Muncul otomatis saat ada SOS aktif -->
+      <div id="sos-alert-bar" style="display:none; background:linear-gradient(90deg,#dc2626,#b91c1c); color:white; padding:12px 24px; display:none; align-items:center; gap:16px; position:sticky; top:0; z-index:100; box-shadow:0 4px 20px rgba(220,38,38,0.4);">
+        <span style="font-size:1.4rem; animation:pulse 1s infinite;">🚨</span>
+        <div style="flex:1;">
+          <strong id="sos-alert-text" style="font-size:0.95rem;">SOS Aktif!</strong>
+          <div id="sos-alert-sub" style="font-size:0.8rem; opacity:0.85; margin-top:2px;"></div>
+        </div>
+        <button onclick="navigateTo('emergency')" style="background:white;color:#dc2626;border:none;border-radius:8px;padding:8px 18px;font-weight:700;cursor:pointer;font-size:0.85rem;">Lihat Darurat</button>
+        <button onclick="document.getElementById('sos-alert-bar').style.display='none'" style="background:rgba(255,255,255,0.2);color:white;border:none;border-radius:8px;padding:8px 12px;cursor:pointer;font-size:1rem;">✕</button>
+      </div>
+
+      <!-- PAGE CONTENT -->
+      <div class="page-content" id="page-content">
+        <!-- Dynamically loaded -->
+      </div>
+    </main>
+  </div>
+
+  <!-- SERVER CONFIG MODAL -->
+  <div id="server-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <h3>Konfigurasi Server</h3>
+      <p>Masukkan URL backend Go server:</p>
+      <input type="text" id="server-url-input" placeholder="http://localhost:8080" class="input-full">
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal('server-modal')">Batal</button>
+        <button class="btn-primary" onclick="saveServerConfig()">Simpan &amp; Tes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAIL MODAL (laporan) -->
+  <div id="detail-modal" class="modal" style="display:none;">
+    <div class="modal-content modal-large">
+      <div class="modal-header">
+        <h3 id="detail-modal-title">Detail</h3>
+        <button class="btn-close" onclick="closeModal('detail-modal')">&times;</button>
+      </div>
+      <div id="detail-modal-body" class="modal-body"></div>
+      <div id="detail-modal-footer" class="modal-footer"></div>
+    </div>
+  </div>
+
+  <!-- SCHEDULE APPOINTMENT MODAL —— Admin pilih psikolog -->
+  <div id="schedule-modal" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width:520px;width:95%;">
+      <div class="modal-header" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);color:white;border-radius:12px 12px 0 0;padding:20px 24px;">
+        <div>
+          <h3 style="color:white;margin:0;font-size:1.05rem;">📅 Jadwalkan Konsultasi</h3>
+          <div id="sched-report-info" style="font-size:0.78rem;opacity:0.85;margin-top:4px;"></div>
+        </div>
+        <button class="btn-close" onclick="closeModal('schedule-modal')" style="color:white;font-size:1.5rem;background:rgba(255,255,255,0.2);border:none;border-radius:8px;width:36px;height:36px;cursor:pointer;">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Step 1: Pilih Psikolog -->
+        <div id="sched-step1">
+          <label style="font-weight:600;font-size:0.85rem;color:#374151;display:block;margin-bottom:8px;">Pilih Psikolog</label>
+          <select id="sched-psikolog-select" class="input-full" onchange="onPsikologSelected(this.value)" style="margin-bottom:12px;">
+            <option value="">-- Memuat daftar psikolog... --</option>
+          </select>
+          <div id="sched-psikolog-schedules" style="margin-top:4px;"></div>
+        </div>
+        <div id="sched-loading" style="text-align:center;padding:20px;color:#888;display:none;">⏳ Memproses...</div>
+        <div id="sched-error" style="color:#dc2626;font-size:0.85rem;margin-top:8px;display:none;"></div>
+      </div>
+      <div class="modal-footer" style="display:flex;gap:8px;justify-content:flex-end;">
+        <button class="btn-secondary" onclick="closeModal('schedule-modal')">Batal</button>
+        <button id="sched-submit-btn" class="btn-primary" onclick="submitScheduleAppointment()" disabled>📅 Jadwalkan Sekarang</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMERGENCY MONITOR MODAL — Modal khusus pemantauan SOS real-time -->
+  <div id="emergency-monitor-modal" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width:720px;width:95%;">
+      <div class="modal-header" style="background:linear-gradient(135deg,#dc2626,#b91c1c);color:white;border-radius:12px 12px 0 0;padding:20px 24px;">
+        <div>
+          <h3 id="em-title" style="color:white;margin:0;font-size:1.1rem;">🚨 Monitor Insiden Darurat</h3>
+          <div id="em-incident-id" style="font-size:0.75rem;opacity:0.8;margin-top:4px;font-family:monospace;"></div>
+        </div>
+        <button class="btn-close" onclick="closeEmergencyMonitor()" style="color:white;font-size:1.5rem;background:rgba(255,255,255,0.2);border:none;border-radius:8px;width:36px;height:36px;cursor:pointer;">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:0;">
+
+        <!-- Info Korban -->
+        <div style="padding:16px 24px;border-bottom:1px solid #f0f0f0;background:#fff7f7;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div>
+              <div style="font-size:0.7rem;color:#888;text-transform:uppercase;font-weight:700;letter-spacing:0.06em;">Korban</div>
+              <div id="em-korban-nama" style="font-weight:700;font-size:1rem;margin-top:2px;"></div>
+              <div id="em-korban-hp" style="font-size:0.85rem;color:#555;"></div>
+            </div>
+            <div>
+              <div style="font-size:0.7rem;color:#888;text-transform:uppercase;font-weight:700;letter-spacing:0.06em;">Status &amp; Durasi</div>
+              <div id="em-status-dur" style="margin-top:2px;"></div>
+              <a id="em-maps-link" href="#" target="_blank" style="font-size:0.8rem;color:#2563eb;display:inline-flex;align-items:center;gap:4px;margin-top:4px;text-decoration:none;">📍 Buka Google Maps</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Responders -->
+        <div style="padding:16px 24px;border-bottom:1px solid #f0f0f0;">
+          <div style="font-size:0.8rem;font-weight:700;color:#374151;margin-bottom:10px;">🏃 Daftar Responder</div>
+          <div id="em-responders-list" style="font-size:0.85rem;color:#555;">Memuat...</div>
+        </div>
+
+        <!-- Audio Real-time Stream -->
+        <div style="padding:16px 24px;background:#fff;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;border-bottom:2px solid #f0fdf4;padding-bottom:10px;">
+            <div style="font-size:0.9rem;font-weight:700;color:#16a34a;display:flex;align-items:center;gap:6px;">
+              <span class="pulse-dot" style="background:#16a34a;display:inline-block;width:10px;height:10px;border-radius:50%;"></span>
+              Audio Real-Time
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <span id="em-audio-indicator" style="font-size:0.8rem;color:#888;font-weight:600;">⏸ Menunggu...</span>
+              <button id="em-audio-toggle" onclick="toggleEmergencyAudio()" style="background:#16a34a;color:white;border:none;border-radius:8px;padding:8px 16px;font-size:0.85rem;font-weight:600;cursor:pointer;box-shadow:0 2px 4px rgba(22,163,74,0.3);">▶ Dengarkan Real-Time</button>
+            </div>
+          </div>
+          <!-- Hidden audio player for live stream -->
+          <audio id="em-audio-player" style="display:none;" controls></audio>
+          <div id="em-audio-status" style="font-size:0.8rem;color:#888;text-align:center;margin-bottom:16px;"></div>
+
+          <!-- Audio Tersimpan -->
+          <div style="font-size:0.85rem;font-weight:700;color:#374151;margin-bottom:10px;margin-top:10px;">📁 Audio yang Tersimpan</div>
+          <div id="em-audio-list" style="max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;background:#f9fafb;padding:12px;border-radius:8px;border:1px solid #e5e7eb;">
+            <div style="color:#aaa;font-size:0.8rem;text-align:center;padding:12px;">Belum ada rekaman tersimpan.</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="display:flex;gap:8px;justify-content:flex-end;">
+        <button onclick="refreshEmergencyMonitor()" style="background:#f3f4f6;color:#374151;border:none;border-radius:8px;padding:8px 18px;font-weight:600;cursor:pointer;">🔄 Refresh</button>
+        <button id="em-resolve-btn" style="background:#dc2626;color:white;border:none;border-radius:8px;padding:8px 18px;font-weight:600;cursor:pointer;">✅ Selesaikan Insiden</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/pages.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

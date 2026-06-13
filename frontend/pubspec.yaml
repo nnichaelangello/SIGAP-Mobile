@@ -1,0 +1,60 @@
+name: sigap_mobile
+description: SIGAP Mobile App - Sexual Harassment Reporting System
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # UI
+  cupertino_icons: ^1.0.2
+  google_fonts: ^6.2.1
+
+  # State Management
+  provider: ^6.1.5+1
+
+  # Networking
+  http: ^1.2.0
+
+  # Utilities
+  intl: ^0.20.2
+  flutter_overlay_window: ^0.5.0
+  vibration: ^3.1.7
+  permission_handler: ^11.2.0
+  device_info_plus: ^11.3.0
+  flutter_local_notifications: ^17.1.2
+  flutter_background_service: ^5.1.0
+  shared_preferences: ^2.5.4
+  google_maps_flutter: 2.5.3
+  url_launcher: 6.2.6
+  geolocator: ^14.0.2
+  record: ^6.2.1
+  path_provider: ^2.1.4
+  audioplayers: ^6.6.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/images/icon_sigap.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/icon_sigap.png"
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/images/
+    - assets/images/articles/
+    - assets/images/onboarding/
+    - assets/animations/

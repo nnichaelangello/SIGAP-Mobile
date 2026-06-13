@@ -1,0 +1,117 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Overlay di atas semua app (TikTok, WA, IG, Home Screen, dll) -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
+    <!-- Wajib agar overlay bisa bangunkan layar yang mati -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
+    <!-- Agar app bisa restart setelah reboot HP -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+    <!-- Getar progresif untuk check-in -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <!-- Foreground service: wajib agar overlay tetap hidup di background -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
+
+    <!-- Izin kirim notifikasi (Android 13+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+    <!-- Wajib Android 14+: agar fullScreenIntent di notifikasi bisa
+         membangunkan layar dan menampilkan UI di lock screen -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
+
+    <!-- REQUEST_IGNORE_BATTERY_OPTIMIZATIONS: agar bisa minta user
+         menonaktifkan battery optimization untuk app ini secara langsung -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+
+    <!-- ========================================================= -->
+    <!-- IZIN LOKASI (WAJIB UNTUK GEOLOCATOR & LIVE TRACKING) -->
+    <!-- ========================================================= -->
+    <!-- Akses lokasi presisi tinggi (GPS) -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- Akses lokasi perkiraan (Tower Seluler/Wi-Fi) -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- Akses lokasi saat aplikasi berjalan di background (Opsional tapi sering diminta) -->
+    <!-- Akses lokasi saat aplikasi berjalan di background (Opsional tapi sering diminta) -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+    <!-- ========================================================= -->
+    <!-- IZIN AUDIO RECORDING (SOS) -->
+    <!-- ========================================================= -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- INTERNET (untuk komunikasi dengan backend) -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:label="Sigap"
+        android:name="${applicationName}"
+        android:usesCleartextTraffic="true"
+        android:icon="@mipmap/ic_launcher">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize"
+            android:showOnLockScreen="true"
+            android:turnScreenOn="true">
+            <!-- Specifies an Android theme to apply to this Activity as soon as
+                 the Android process has started. This theme is visible to the user
+                 while the Flutter UI initializes. After that, this theme continues
+                 to determine the Window background behind the Flutter UI. -->
+            <meta-data
+              android:name="io.flutter.embedding.android.NormalTheme"
+              android:resource="@style/NormalTheme"
+              />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <!-- Don't delete the meta-data below.
+             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+
+        <!-- Google Maps API Key -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDpiJNh7rGlkbrBNGeHT8-Y1SnSQlIrRyc" />
+
+        <service
+            android:name="flutter.overlay.window.flutter_overlay_window.OverlayService"
+            android:foregroundServiceType="specialUse"
+            android:exported="false">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Overlay check-in keamanan pengguna"/>
+        </service>
+    </application>
+    <!-- Required to query activities that can process text, see:
+         https://developer.android.com/training/package-visibility and
+         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
+
+         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
+        </intent>
+        <!-- url_launcher: buka Google Maps Navigation -->
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="google.navigation"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="https"/>
+        </intent>
+    </queries>
+</manifest>

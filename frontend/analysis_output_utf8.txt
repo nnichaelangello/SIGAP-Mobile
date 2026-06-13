@@ -1,0 +1,12 @@
+﻿Analyzing wawasan...                                            
+
+  error - Unexpected text ';' - lib\features\wawasan\data\datasources\wawasan_local_datasource.dart:4:63 - unexpected_token
+  error - Unexpected text ';' - lib\features\wawasan\domain\repositories\wawasan_repository.dart:6:38 - unexpected_token
+  error - Unexpected text ';' - lib\features\wawasan\presentation\pages\all_articles_page.dart:4:56 - unexpected_token
+   info - Use 'const' with the constructor to improve performance - lib\features\wawasan\presentation\pages\article_detail_page.dart:179:29 - prefer_const_constructors
+  error - Unexpected text ';' - lib\features\wawasan\presentation\pages\article_search_page.dart:4:85 - unexpected_token
+  error - Unexpected text ';' - lib\features\wawasan\presentation\pages\wawasan_page.dart:8:1 - unexpected_token
+   info - Use 'const' with the constructor to improve performance - lib\features\wawasan\presentation\pages\wawasan_page.dart:188:46 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\wawasan\presentation\pages\wawasan_page.dart:190:48 - prefer_const_constructors
+   info - Dangling library doc comment - lib\features\wawasan\presentation\widgets\article_card_widget.dart:1:1 - dangling_library_doc_comments
+

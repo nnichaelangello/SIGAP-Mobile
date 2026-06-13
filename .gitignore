@@ -1,0 +1,95 @@
+# ========================================
+# SIGAP MOBILE - SECURE .GITIGNORE
+# ========================================
+
+# ==== SECURITY-CRITICAL (NEVER COMMIT) ====
+# API Keys & Secrets
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+**/secrets/
+**/credentials/
+**/private/
+
+# Firebase & Google Cloud
+**/firebase-admin-sdk*.json
+**/serviceAccountKey*.json
+**/google-services.json
+**/GoogleService-Info.plist
+firebase_options.dart
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+*.env
+
+# ==== OS FILES ====
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.lnk
+
+# ==== IDE & EDITOR ====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# ==== LOGS & DEBUG ====
+*.log
+logs/
+debug/
+*.trace
+
+# ==== TEMPORARY FILES ====
+*.tmp
+*.temp
+temp/
+tmp/
+*.bak
+*.backup
+
+# ==== BUILD ARTIFACTS ====
+build/
+dist/
+out/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# ==== CACHE ====
+.cache/
+*.cache
+
+# ========================================
+# SPECIFIC SIGAP PROJECT
+# ========================================
+backend/*.db
+backend/*.db-shm
+backend/*.db-wal
+backend/audio_records/
+backend/uploads/
+backend/*.exe
+
+frontend/build/
+frontend/.dart_tool/
+
+# ========================================
+# NON-PROJECT FILES (Docs, Scripts, Zips)
+# ========================================
+*.bat
+*.pdf
+*.docx
+*.zip
+SCREENSHOT DOKUMENTASI/
+docs/
+SETUP_*.md
+rencana_*.md*
