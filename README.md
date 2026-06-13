@@ -1,300 +1,187 @@
-<div align="center">
+# SIGAP — Sistem Informasi Gesit dan Aktif untuk Perlindungan
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0947aa,50:15928c,100:6BA3BE&height=180&section=header&text=SIGAP%20Mobile&fontSize=50&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=Flutter%20%2B%20Golang%20%2B%20Firebase&descAlignY=55&descSize=16" width="100%"/>
+> **Platform Mobile & Web Pencegahan dan Penanganan Kekerasan Seksual di Lingkungan Kampus**
 
-<p>
-  <img src="https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter"/>
-  <img src="https://img.shields.io/badge/Golang-Backend-00ADD8?style=for-the-badge&logo=go&logoColor=white" alt="Go"/>
-  <img src="https://img.shields.io/badge/Firebase-Database-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase"/>
-  <img src="https://img.shields.io/badge/Groq_LLM-AI-FF6B6B?style=for-the-badge&logo=openai&logoColor=white" alt="AI"/>
-</p>
+![Flutter](https://img.shields.io/badge/Mobile-Flutter-blue?logo=flutter)
+![Go](https://img.shields.io/badge/Backend-Go%201.22-00ADD8?logo=go)
+![SQLite](https://img.shields.io/badge/Database-SQLite-003B57?logo=sqlite)
+![License](https://img.shields.io/badge/License-Academic-green)
 
-> *Platform Mobile Pencegahan dan Penanganan Kekerasan Seksual di Perguruan Tinggi*
-
-**Telkom University Surabaya** | Tahun Akademik 2024/2025
-
-</div>
+---
 
 ## Daftar Isi
 
 - [Tentang Proyek](#tentang-proyek)
+- [Fitur Utama](#fitur-utama)
 - [Arsitektur Sistem](#arsitektur-sistem)
-- [Fitur Aplikasi](#fitur-aplikasi)
-- [Tech Stack](#tech-stack)
-- [Struktur Folder](#struktur-folder)
-- [Quick Start](#quick-start)
-- [API Endpoints](#api-endpoints)
-- [Pembagian Tugas](#pembagian-tugas)
+- [Teknologi yang Digunakan](#teknologi-yang-digunakan)
+- [Struktur Repository](#struktur-repository)
+- [Cara Menjalankan](#cara-menjalankan)
+- [REST API Endpoint](#rest-api-endpoint)
+- [Skema Basis Data](#skema-basis-data)
 - [Tim Pengembang](#tim-pengembang)
+- [Keterbatasan & Pengembangan Lanjutan](#keterbatasan--pengembangan-lanjutan)
+
+---
 
 ## Tentang Proyek
 
-SIGAP PPKPT adalah aplikasi mobile (Android dan iOS) yang menyediakan ekosistem lengkap untuk pencegahan dan penanganan kekerasan seksual di lingkungan kampus. Proyek ini merupakan evolusi dari platform web SIGAP yang bertransformasi ke ekosistem mobile-first dengan stack teknologi baru.
+SIGAP adalah sistem informasi multi-layer yang dirancang untuk memfasilitasi pelaporan dan penanganan kasus kekerasan seksual di lingkungan perguruan tinggi, sesuai dengan amanat **Permendikbudristek Nomor 30 Tahun 2021** tentang Pencegahan dan Penanganan Kekerasan Seksual (PPKS).
 
-| Komponen | Teknologi |
-|----------|-----------|
-| Frontend | Flutter (Dart) |
-| Backend | Golang (Go) |
-| Database | Firebase (Firestore / RTDB) + SQL (TBD) |
-| AI | Groq LLM API |
+Sistem ini mengintegrasikan tiga kanal dalam satu ekosistem terpadu:
+1. **Aplikasi Mobile Flutter** — untuk pengguna/penyintas
+2. **Dashboard Admin Web** — untuk pengelolaan laporan dan pemantauan darurat
+3. **Portal Psikolog Web** — untuk manajemen sesi konsultasi
+4. **Panel DB Admin Web** — untuk administrasi basis data
+5. **Backend RESTful Go** — sebagai lapisan logika bisnis dan data tunggal
+
+---
+
+## Fitur Utama
+
+### 📱 Aplikasi Mobile (Flutter)
+- Onboarding & autentikasi (Register / Login)
+- **Pelaporan anonim** dengan kode pelacak unik (*tracking code*)
+- Pemantauan status laporan secara berkala
+- Pemilihan jadwal konsultasi psikolog
+- Melihat catatan dan hasil sesi konsultasi dari psikolog
+
+### 🆘 Fitur Darurat SOS
+- Tombol SOS satu sentuh untuk mengaktifkan mode darurat
+- **Perekaman audio otomatis** berbasis *chunk* 3 detik secara real-time
+- Pembaruan **lokasi GPS** korban secara periodik
+- Notifikasi instan ke semua admin aktif
+- Tampilan peta responder dengan jarak ke korban
+- Pemantauan audio real-time dari Dashboard Admin
+
+### 📡 Mode Pantau (Preventif)
+- Aktivasi sesi pantau dengan interval check-in yang dapat disesuaikan
+- Pengiriman titik GPS berkala (*heartbeat*) ke server
+- Eskalasi otomatis ke mode darurat jika check-in terlewat
+
+### 🖥️ Dashboard Admin Web
+- Statistik ringkasan laporan dan insiden aktif
+- Manajemen seluruh siklus laporan via **state machine** yang terstruktur
+- Penjadwalan psikolog untuk setiap laporan
+- Pemantauan audio SOS real-time langsung dari browser
+- Panel manajemen pengguna
+
+### 🧑‍⚕️ Portal Psikolog Web
+- Manajemen slot jadwal konsultasi mingguan
+- Konfirmasi / penolakan janji temu dari user
+- Pengisian **catatan sesi format SOAP** (Subjective, Objective, Assessment, Plan)
+- Penilaian risiko klien (low / medium / high / critical)
+- Penandaan kebutuhan sesi lanjutan (*follow-up*)
+- Pengakhiran sesi secara resmi
+
+---
 
 ## Arsitektur Sistem
 
-### High-Level Architecture
-
-```mermaid
-graph TB
-    subgraph PL["Presentation Layer - Flutter Mobile App"]
-        direction LR
-        UA["User App\n(Mahasiswa)"]
-        AP["Admin Panel\n(PPKPT)"]
-        PP["Psikolog Panel\n(Konselor)"]
-    end
-
-    subgraph BL["Backend Layer - Golang REST API"]
-        direction LR
-        AS["Auth Service\n(JWT)"]
-        RS["Report Service"]
-        CS["Chatbot Service"]
-        WS["WebSocket Service\n(Realtime)"]
-    end
-
-    subgraph DL["Data Layer"]
-        direction LR
-        subgraph DB["Database"]
-            FB["Firebase\n(Firestore / RTDB)"]
-            SQ["SQL Database\n(TBD)"]
-        end
-        subgraph EX["External Services"]
-            GR["Groq LLM\nAPI"]
-            GM["Google Maps\nAPI"]
-            FC["Firebase Cloud\nMessaging"]
-            AE["AES-256\nEncryption"]
-        end
-    end
-
-    UA -->|HTTP / REST| AS
-    UA -->|HTTP / REST| RS
-    UA -->|HTTP / REST| CS
-    UA -->|WebSocket| WS
-    AP -->|HTTP / REST| AS
-    AP -->|HTTP / REST| RS
-    PP -->|HTTP / REST| AS
-    PP -->|HTTP / REST| RS
-
-    AS --> FB
-    RS --> FB
-    RS --> SQ
-    CS --> GR
-    WS --> FC
-
-    UA -.->|Maps SDK| GM
-    RS -.->|Encrypt| AE
-
-    style PL fill:#E3F2FD,stroke:#1565C0,stroke-width:2px
-    style BL fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px
-    style DB fill:#FFF3E0,stroke:#E65100,stroke-width:2px
-    style EX fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    PRESENTATION LAYER                        │
+│  ┌──────────────┐  ┌─────────────┐  ┌────────────────────┐  │
+│  │ Mobile App   │  │ Web Admin   │  │  Portal Psikolog   │  │
+│  │ (Flutter)    │  │ Dashboard   │  │  + DB Admin Panel  │  │
+│  └──────┬───────┘  └──────┬──────┘  └─────────┬──────────┘  │
+└─────────┼────────────────┼───────────────────┼─────────────┘
+          │   REST API / JSON (HTTP + JWT)      │
+┌─────────▼────────────────▼───────────────────▼─────────────┐
+│                    BUSINESS LOGIC LAYER                      │
+│              Go HTTP Server (net/http)                       │
+│   Auth │ Report │ Emergency │ Schedule │ Session │ Pantau   │
+└───────────────────────────┬─────────────────────────────────┘
+                            │
+┌───────────────────────────▼─────────────────────────────────┐
+│                      DATA LAYER                              │
+│                  SQLite (sigap.db)                           │
+│  13 tabel: users, reports, appointments, session_notes,      │
+│  emergency_incidents, emergency_audios, pantau_sessions, ... │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-### Request Flow
+---
 
-```mermaid
-sequenceDiagram
-    participant U as Flutter App
-    participant G as Go API Server
-    participant F as Firebase
-    participant AI as Groq LLM
+## Teknologi yang Digunakan
 
-    U->>G: POST /api/auth/login
-    G->>F: Verify Credentials
-    F-->>G: User Data + Role
-    G-->>U: JWT Token
+| Lapisan | Komponen | Teknologi |
+|---|---|---|
+| Presentasi (Mobile) | Aplikasi Pengguna | Flutter (Dart), Provider |
+| Presentasi (Web Admin) | Dashboard Admin | HTML5, Vanilla JS, CSS3 |
+| Presentasi (Web Psikolog) | Portal Psikolog | HTML5, Vanilla JS, CSS3 |
+| Presentasi (Web DB) | Panel Database Admin | HTML5, Vanilla JS, CSS3 |
+| Logika Bisnis | Backend REST API | Go 1.22, net/http |
+| Autentikasi | Token Manajemen | JWT (golang-jwt/jwt) |
+| Data | Basis Data Relasional | SQLite (modernc.org/sqlite) |
+| Peta & Lokasi | GPS & Navigasi | Google Maps SDK |
+| Audio | Perekaman & Pemutaran | record, audioplayers (Dart) |
+| Notifikasi | Email Transaksional | SMTP (net/smtp Go) |
 
-    U->>G: POST /api/reports (encrypted)
-    G->>F: Store Report
-    G->>F: Trigger FCM Notification
-    F-->>G: Success
-    G-->>U: Report ID (anonim)
+---
 
-    U->>G: POST /api/chat/message
-    G->>AI: Forward + Context
-    AI-->>G: AI Response
-    G-->>U: Empathetic Reply
-```
-
-### Emergency SOS Flow
-
-```mermaid
-sequenceDiagram
-    participant V as Korban (User)
-    participant A as Go API
-    participant F as Firebase
-    participant R as Responder (HP Penolong)
-
-    V->>V: Tekan SOS Button
-    V->>V: Countdown 3 detik
-    V->>A: POST /api/emergency/sos (lat, lng)
-    A->>F: Store Incident
-    A->>F: FCM Push ke Kontak Darurat
-    F-->>R: Notifikasi Darurat
-
-    R->>A: Accept & Start Tracking
-    A-->>V: WebSocket: Responder On The Way
-
-    loop Realtime Tracking
-        R->>A: WS: Update Lokasi Responder
-        A-->>V: WS: Lokasi Responder (lat, lng)
-    end
-
-    R->>A: POST Konfirmasi Tiba
-    A->>F: Update Status: Resolved
-    A-->>V: Misi Selesai
-```
-
-## Fitur Aplikasi
-
-### Fitur User (Mahasiswa)
-
-| Modul | Fitur Utama | Jumlah Sub-Fitur |
-|-------|-------------|:----------------:|
-| 🏠 **Beranda** | Dashboard, Portal Layanan, Agenda Prioritas, Mode Guest | 5 |
-| 🛡️ **Lapor Darurat (SOS)** | SOS Button, Countdown, Radar, Live Tracking, FCM Push | 9 |
-| 📝 **Lapor Formal** | Form 6 Langkah (Penyintas, Kekhawatiran, Gender, Pelaku, Detail, Data Final), Anonim | 10 |
-| 🤖 **Chatbot TemanKu** | Chat AI, Groq LLM, Intent Scoring, Emergency Detection, Consent Flow | 7 |
-| 📡 **Pantau Aku** | Check-in Berkala, Background Service, Overlay, Timeout Alert, Kontak Darurat | 10 |
-| 📚 **Wawasan** | Artikel Edukasi, Kategori, Search, Featured Article | 8 |
-| 👤 **Akun dan Profil** | Edit Profil, Keamanan (PIN, Fingerprint), About, Help, Privacy Policy | 17 |
-| 📊 **Pantau Laporan** | Search by Report ID, Timeline Status, Detail View | 3 |
-| 🔔 **Notifikasi** | List, Tipe, Mark Read, FCM Integration | 5 |
-| 🚀 **Onboarding** | Slides, Auth Check | 3 |
-
-### Fitur Admin Panel
-
-| No | Fitur | Deskripsi |
-|----|-------|-----------|
-| 1 | Login Admin | Autentikasi role-based via JWT |
-| 2 | Dashboard Overview | Statistik total laporan, kasus aktif, resolved |
-| 3 | Daftar Kasus | List, filter, search semua kasus |
-| 4 | Detail Kasus | View detail dan dekripsi data |
-| 5 | Update Status | Diterima, Ditinjau, Proses, Selesai |
-| 6 | Manual Input | Input kasus manual |
-| 7 | Statistik Visual | Chart dan grafik data kasus |
-| 8 | Hapus Kasus | Soft delete dengan konfirmasi |
-| 9 | Kelola Artikel | CRUD artikel wawasan / edukasi |
-| 10 | Push Notification | Broadcast notifikasi ke user |
-
-### Fitur Psikolog Panel
-
-| No | Fitur | Deskripsi |
-|----|-------|-----------|
-| 1 | Login Psikolog | Autentikasi khusus psikolog |
-| 2 | Dashboard | Overview kasus yang di-assign |
-| 3 | Kasus Assigned | List kasus yang ditugaskan |
-| 4 | Detail Kasus | Akses data kasus dan histori |
-| 5 | Catatan Konseling | Input catatan sesi |
-| 6 | Update Progress | Perbarui status penanganan |
-| 7 | Jadwal Konseling | Penjadwalan sesi |
-| 8 | Chat Langsung | In-app chat dengan user |
-| 9 | Rekomendasi Rujukan | Rujukan ke pihak lain |
-| 10 | Laporan Penanganan | Export laporan (PDF) |
-
-### Rekap Total
+## Struktur Repository
 
 ```
-User Features  : 77 sub-fitur
-Admin Panel    : 10 sub-fitur
-Psikolog Panel : 10 sub-fitur
-──────────────────────────────
-TOTAL          : 97 sub-fitur
+SIGAP-Mobile/
+├── frontend/              # Aplikasi mobile Flutter
+│   ├── lib/
+│   │   ├── core/          # Service, config, API client
+│   │   └── features/      # Modul fitur (auth, lapor, sos, pantau, dll)
+│   └── pubspec.yaml
+├── backend/               # Backend REST API (Go)
+│   ├── handlers/          # Handler per fitur (9 handler)
+│   ├── database/          # Skema & migrasi SQLite
+│   ├── middleware/        # JWT Auth, Admin-only, Staff-only
+│   ├── utils/             # Helper (JWT, response, email)
+│   └── main.go
+├── web-dashboard/         # Dashboard Admin (HTML/JS)
+│   ├── index.html
+│   ├── css/
+│   └── js/
+├── psikolog-portal/       # Portal Psikolog (HTML/JS)
+│   ├── index.html
+│   ├── css/
+│   └── js/
+├── db-admin/              # Panel Database Admin (HTML/JS)
+│   ├── index.html
+│   └── js/
+└── README.md
 ```
 
-## Tech Stack
+---
 
-### Frontend
+## Cara Menjalankan
 
-| Teknologi | Fungsi |
-|-----------|--------|
-| Flutter 3.x | Framework mobile cross-platform |
-| Dart 3.x | Bahasa pemrograman |
-| Provider | State management |
-| Google Maps Flutter | Live tracking peta |
-| Google Fonts | Typography |
-| HTTP / Dio | REST API client |
-| Flutter Overlay Window | Background overlay check-in |
-| Permission Handler | Request permissions |
-| fl_chart | Visualisasi statistik |
+### Prasyarat
+- [Go 1.22+](https://golang.org/dl/)
+- [Flutter SDK 3.x+](https://flutter.dev/docs/get-started/install)
+- Android Studio / VS Code
+- Android Emulator atau perangkat fisik Android
 
-### Backend
+### 1. Jalankan Backend
 
-| Teknologi | Fungsi |
-|-----------|--------|
-| Golang (Go) | REST API server |
-| Gin / Fiber / Echo | Web framework (TBD) |
-| JWT | Token-based authentication |
-| gorilla/websocket | Realtime WebSocket |
-| Firebase Admin SDK (Go) | Firebase server integration |
-
-### Database dan Services
-
-| Teknologi | Fungsi |
-|-----------|--------|
-| Firebase Firestore | NoSQL database utama |
-| Firebase Realtime DB | Opsional (sync cepat) |
-| SQL (TBD) | PostgreSQL / MySQL (jika diperlukan) |
-| Firebase Auth | Autentikasi multi-role |
-| Firebase Cloud Messaging | Push notification |
-| Groq LLM API | AI chatbot engine |
-| Google Maps Platform | Maps SDK, Geocoding |
-| AES-256-GCM | Enkripsi end-to-end |
-
-## Struktur Folder
-
-```
-app/
-├── frontend/                          # Flutter Mobile App
-│   └── lib/
-│       ├── main.dart
-│       ├── core/
-│       │   ├── constants/
-│       │   ├── result/
-│       │   └── widgets/
-│       └── features/
-│           ├── onboarding/            # Splash dan Onboarding
-│           ├── app_shell/             # Main Navigation (BottomNav)
-│           ├── home/                  # Dashboard Beranda
-│           ├── chat/                  # Chatbot AI TemanKu
-│           ├── lapor/                 # Lapor Darurat dan Formal
-│           ├── pantau/                # Pantau Aku (Check-in)
-│           ├── wawasan/               # Edukasi dan Artikel
-│           ├── notification/          # Notifikasi
-│           ├── report_monitor/        # Pantau Status Laporan
-│           ├── account/               # Profil dan Pengaturan
-│           ├── admin/                 # Admin Panel (TBD)
-│           └── psikolog/              # Psikolog Panel (TBD)
-│
-├── backend/                           # Golang REST API Server
-│   ├── cmd/
-│   │   └── server/
-│   │       └── main.go
-│   ├── internal/
-│   │   ├── config/
-│   │   ├── middleware/
-│   │   ├── handler/
-│   │   ├── service/
-│   │   ├── repository/
-│   │   ├── model/
-│   │   └── utils/
-│   ├── pkg/
-│   ├── go.mod
-│   └── go.sum
-│
-└── docs/                              # Dokumentasi
+```bash
+cd backend
+go mod tidy
+go run .
 ```
 
-## Quick Start
+> Server akan berjalan di `http://localhost:8080`
 
-### Frontend (Flutter)
+### 2. Konfigurasi IP pada Aplikasi Mobile
+
+Buka file `frontend/lib/core/services/api_service.dart` dan sesuaikan IP:
+
+```dart
+// Untuk Android Emulator:
+static String _baseUrl = 'http://10.0.2.2:8080';
+
+// Untuk perangkat fisik (ganti dengan IP laptop Anda):
+static String _baseUrl = 'http://192.168.x.x:8080';
+```
+
+### 3. Jalankan Aplikasi Mobile
 
 ```bash
 cd frontend
@@ -302,107 +189,134 @@ flutter pub get
 flutter run
 ```
 
-### Backend (Golang)
+### 4. Akses Antarmuka Web
 
-```bash
-cd backend
-go mod download
-go run cmd/server/main.go
+Buka file berikut langsung di browser:
+- **Dashboard Admin:** `web-dashboard/index.html`
+- **Portal Psikolog:** `psikolog-portal/index.html`
+- **Panel DB Admin:** `db-admin/index.html`
+
+### Akun Default (Setelah Server Pertama Kali Dijalankan)
+
+| Peran | Email | Password |
+|---|---|---|
+| Admin | `admin@sigap.id` | `admin123` |
+| Psikolog | `psikolog@sigap.id` | `psikolog123` |
+
+---
+
+## REST API Endpoint
+
+### Autentikasi
+| Metode | Endpoint | Fungsi | Peran |
+|---|---|---|---|
+| POST | `/api/auth/register` | Registrasi pengguna baru | Publik |
+| POST | `/api/auth/login` | Login & mendapatkan JWT | Publik |
+| GET | `/api/auth/me` | Profil pengguna aktif | Semua |
+
+### Laporan
+| Metode | Endpoint | Fungsi | Peran |
+|---|---|---|---|
+| POST | `/api/reports` | Kirim laporan baru | User |
+| GET | `/api/reports` | Daftar semua laporan | Admin/Psikolog |
+| POST | `/api/reports/status` | Update status laporan | Admin |
+
+### Konsultasi
+| Metode | Endpoint | Fungsi | Peran |
+|---|---|---|---|
+| POST | `/api/appointments/initiate` | Tunjuk psikolog | Admin |
+| POST | `/api/appointments/select` | Pilih slot jadwal | User |
+| POST | `/api/appointments/respond` | Konfirmasi/tolak jadwal | Psikolog |
+| POST | `/api/appointments/complete` | Akhiri sesi | Psikolog |
+| POST | `/api/session-notes` | Simpan catatan SOAP | Psikolog |
+
+### Darurat SOS
+| Metode | Endpoint | Fungsi | Peran |
+|---|---|---|---|
+| POST | `/api/emergency/sos` | Aktifkan darurat SOS | User |
+| POST | `/api/upload/audio` | Upload chunk audio | User |
+| GET | `/api/emergency/audio` | Ambil daftar audio chunk | Admin/User |
+
+### Mode Pantau
+| Metode | Endpoint | Fungsi | Peran |
+|---|---|---|---|
+| POST | `/api/pantau/start` | Mulai sesi pantau GPS | User |
+| POST | `/api/pantau/heartbeat` | Kirim titik GPS | User |
+
+---
+
+## Skema Basis Data
+
+Sistem menggunakan 13 tabel relasional:
+
+| Tabel | Fungsi |
+|---|---|
+| `users` | Data seluruh pengguna (user, admin, psikolog) |
+| `reports` | Laporan kekerasan seksual dari penyintas |
+| `appointments` | Jadwal sesi konsultasi user–psikolog |
+| `session_notes` | Catatan SOAP psikolog per sesi |
+| `session_feedback` | Rating & ulasan user setelah sesi |
+| `emergency_incidents` | Insiden darurat SOS aktif |
+| `emergency_audios` | Rekaman audio chunk dari insiden SOS |
+| `emergency_responses` | Data responder yang merespons SOS |
+| `pantau_sessions` | Sesi mode pantau berbasis GPS |
+| `pantau_heartbeats` | Rekam jejak GPS per sesi pantau |
+| `psikolog_schedules` | Slot jadwal mingguan psikolog |
+| `notifications` | Notifikasi dalam aplikasi per pengguna |
+| `audit_trail` | Log setiap perubahan status laporan |
+
+### Alur Status Laporan (State Machine)
+
+```
+pending ──► diterima ──► menunggu_penjadwalan ──► dijadwalkan ──► diproses ──► selesai (final)
+   │            │
+   └──► ditolak (final)
 ```
 
-## API Endpoints
+> ⚠️ Laporan hanya dapat ditandai `selesai` oleh Admin **jika dan hanya jika** psikolog telah mengakhiri sesi konsultasi terakhir.
 
-### Authentication
-
-| Method | Endpoint | Deskripsi |
-|--------|----------|-----------|
-| POST | `/api/auth/register` | Registrasi user baru |
-| POST | `/api/auth/login` | Login (return JWT dan role) |
-| GET | `/api/auth/me` | Get current user info |
-| POST | `/api/auth/refresh` | Refresh token |
-
-### Reports
-
-| Method | Endpoint | Deskripsi |
-|--------|----------|-----------|
-| POST | `/api/reports` | Submit laporan (encrypted) |
-| GET | `/api/reports/:id` | Status laporan by ID anonim |
-| GET | `/api/reports` | List laporan (Admin only) |
-| PUT | `/api/reports/:id/status` | Update status (Admin) |
-| DELETE | `/api/reports/:id` | Hapus kasus (Admin) |
-| POST | `/api/reports/manual` | Manual input (Admin) |
-
-### Chatbot
-
-| Method | Endpoint | Deskripsi |
-|--------|----------|-----------|
-| POST | `/api/chat/message` | Kirim pesan ke AI |
-| GET | `/api/chat/history` | Histori chat per session |
-
-### Articles
-
-| Method | Endpoint | Deskripsi |
-|--------|----------|-----------|
-| GET | `/api/articles` | List artikel |
-| GET | `/api/articles/:id` | Detail artikel |
-| POST | `/api/articles` | Buat artikel (Admin) |
-| PUT | `/api/articles/:id` | Edit artikel (Admin) |
-| DELETE | `/api/articles/:id` | Hapus artikel (Admin) |
-
-### Psikolog
-
-| Method | Endpoint | Deskripsi |
-|--------|----------|-----------|
-| GET | `/api/psikolog/cases` | Kasus yang di-assign |
-| GET | `/api/psikolog/cases/:id` | Detail kasus |
-| POST | `/api/psikolog/cases/:id/notes` | Tambah catatan |
-| PUT | `/api/psikolog/cases/:id/progress` | Update progress |
-| POST | `/api/psikolog/schedule` | Buat jadwal |
-| GET | `/api/psikolog/schedule` | List jadwal |
-
-### Emergency
-
-| Method | Endpoint | Deskripsi |
-|--------|----------|-----------|
-| POST | `/api/emergency/sos` | Trigger SOS |
-| WS | `/ws/tracking/:incident_id` | WebSocket live tracking |
-
-### Statistics dan Notification
-
-| Method | Endpoint | Deskripsi |
-|--------|----------|-----------|
-| GET | `/api/statistics/dashboard` | Data statistik |
-| POST | `/api/notifications/push` | Push notification |
-
-## Pembagian Tugas
-
-| Anggota | Fokus Utama | Fitur |
-|---------|-------------|-------|
-| **Sulthonika** (Lead) | Arsitektur, Core, Lapor | Go backend setup, Firebase config, seluruh fitur Lapor (Darurat, Formal, Chatbot TemanKu, Pantau Laporan) |
-| **Anggota 2** | Admin Panel | ADM-1 s.d. ADM-10 (Flutter + Go API Admin) |
-| **Anggota 3** | Psikolog Panel | PSI-1 s.d. PSI-10 (Flutter + Go API Psikolog) |
-| **Anggota 4** | Fitur Umum | Beranda, Pantau Aku, Wawasan, Akun, Notifikasi, Onboarding |
+---
 
 ## Tim Pengembang
 
-| Nama | NIM | Role |
-|------|-----|------|
-| Sulthonika Mahfudz Al Mujahidin | 1202230023 | Project Lead, Full-Stack Developer |
-| Anggota 2 | - | Developer |
-| Anggota 3 | - | Developer |
-| Anggota 4 | - | Developer |
+| NIM | Nama | Kontribusi Utama |
+|---|---|---|
+| 1202230023 | Sulthonika Mahfudz Al Mujahidin | Aplikasi mobile Flutter: fitur kritis utama (pelaporan, pantau, SOS & darurat) |
+| 1202230014 | Michael Angello Qadosy Riyadi | Backend Go, Dashboard Admin Web, Portal Psikolog Web, DB Admin Web, fitur SOS & darurat (audio real-time, GPS), integrasi layer mobile & web |
+| 1202230008 | Nur Alifia Rustan | Aplikasi mobile Flutter: fitur kritis utama (pelaporan, pantau, SOS & darurat) |
+| 1202230050 | A'isyah Belqis Febi Aulia | Aplikasi mobile Flutter: halaman psikolog, akun, wawasan, Portal Psikolog Web |
 
-**Dosen Pembimbing:** Mustafa Kamal, S.Kom., M.Kom
+---
 
-## Lisensi
+## Keterbatasan & Pengembangan Lanjutan
 
-MIT License - Copyright (c) 2024-2025 SIGAP Development Team, Telkom University Surabaya
+### Fitur Belum Selesai
+- [ ] **Chatbot AI** — Handler backend tersedia, namun integrasi model bahasa belum selesai
+- [ ] **Antarmuka mobile untuk Admin** — Saat ini hanya tersedia via web
+- [ ] **Antarmuka mobile untuk Psikolog** — Saat ini hanya tersedia via web
+
+### Saran Pengembangan Lanjutan
+- Migrasi basis data dari SQLite ke **PostgreSQL** untuk skalabilitas produksi
+- Implementasi **enkripsi end-to-end** pada konten laporan dan audio
+- Integrasi **Push Notification** via Firebase Cloud Messaging (FCM)
+- Penambahan fitur **chatbot AI** untuk dukungan awal korban
+
+---
+
+## Referensi
+
+1. H. Tjahjaningsih, "Kekerasan Seksual di Perguruan Tinggi: Faktor Penyebab dan Dampak Psikologis," *Jurnal Ilmu Sosial dan Ilmu Politik*, vol. 24, no. 2, pp. 112–125, 2021.
+2. Kemendikbudristek, "Permendikbudristek No. 30 Tahun 2021 tentang PPKS di Lingkungan Perguruan Tinggi," Jakarta, 2021.
+3. R. Pratama and A. Nugraha, "Rancang Bangun Sistem Informasi Pelaporan Pelecehan Seksual Berbasis Web," *JTIIK*, vol. 9, no. 4, pp. 741–750, 2022.
+4. M. Sari et al., "Pengembangan Aplikasi Mobile untuk Pelaporan Kekerasan Seksual dengan Fitur Anonimitas," *SEMNASTIK*, pp. 231–239, 2022.
+5. I. Sommerville, *Software Engineering*, 10th ed. London: Pearson, 2016.
+6. M. B. Jones et al., "JSON Web Token (JWT)," RFC 7519, IETF, May 2015.
+
+---
 
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0947aa,50:15928c,100:6BA3BE&height=80&section=footer" width="100%"/>
-
-**SIGAP PPKPT Mobile** | Flutter + Golang + Firebase  
-Telkom University Surabaya | 2024-2025
+**SIGAP** — Dibuat sebagai Tugas Besar Mata Kuliah Aplikasi Perangkat Bergerak  
+Program Studi Teknologi Informasi, Telkom University Surabaya · 2026
 
 </div>
