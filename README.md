@@ -282,7 +282,7 @@ pending ──► diterima ──► menunggu_penjadwalan ──► dijadwalkan 
 | NIM | Nama | Kontribusi Utama |
 |---|---|---|
 | 1202230023 | Sulthonika Mahfudz Al Mujahidin | Aplikasi mobile Flutter: fitur kritis utama (pelaporan, pantau, SOS & darurat) |
-| 1202230014 | Michael Angello Qadosy Riyadi | Backend Go, Dashboard Admin Web, Portal Psikolog Web, DB Admin Web, fitur SOS & darurat (audio real-time, GPS), integrasi layer mobile & web |
+| 1202230014 | Michael Angello Qadosy Riyadi | Backend Go, Dashboard Admin/Psikolog Web, SOS & darurat, integrasi layer mobile & web |
 | 1202230008 | Nur Alifia Rustan | Aplikasi mobile Flutter: fitur kritis utama (pelaporan, pantau, SOS & darurat) |
 | 1202230050 | A'isyah Belqis Febi Aulia | Aplikasi mobile Flutter: halaman psikolog, akun, wawasan, Portal Psikolog Web |
 
