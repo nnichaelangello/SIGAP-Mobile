@@ -244,7 +244,7 @@ const Pages = (() => {
     } else if (d.status === 'diterima') {
       // Admin harus menjadwalkan konsultasi dulu sebelum bisa lanjut
       actions = `
-        <button class="btn-primary btn-sm" onclick="closeModal('detail-modal');showScheduleModal(${d.id}, '${d.tracking_code}')" style="background:#2563eb;">📅 Jadwalkan Konsultasi</button>
+        <button class="btn-primary btn-sm" onclick="closeModal('detail-modal');showScheduleModal(${d.id}, '${d.tracking_code}', true)" style="background:#2563eb;">📅 Jadwalkan Konsultasi</button>
         <button class="btn-danger btn-sm" onclick="showRejectForm(${d.id})">❌ Tolak</button>
       `;
     } else if (d.status === 'dijadwalkan') {
@@ -256,7 +256,7 @@ const Pages = (() => {
     } else if (d.status === 'diproses') {
       actions = `
         <button class="btn-success btn-sm" onclick="showCompleteForm(${d.id})">✅ Selesai</button>
-        <button class="btn-primary btn-sm" onclick="closeModal('detail-modal');showScheduleModal(${d.id}, '${d.tracking_code}')" style="background:#2563eb; margin-left: 8px;">📅 Jadwalkan Sesi Lanjutan</button>
+        <button class="btn-primary btn-sm" onclick="closeModal('detail-modal');showScheduleModal(${d.id}, '${d.tracking_code}', ${d.perlu_tindak_lanjut === true || d.perlu_tindak_lanjut === 1 || d.perlu_tindak_lanjut === 'true'})" style="background:#2563eb; margin-left: 8px;">📅 Jadwalkan Sesi Lanjutan</button>
       `;
     }
 

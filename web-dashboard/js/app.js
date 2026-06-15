@@ -314,7 +314,13 @@ async function deleteSchedule(scheduleId) {
 let _schedReportId = null;
 let _schedSelectedPsikologId = null;
 
-async function showScheduleModal(reportId, trackingCode) {
+async function showScheduleModal(reportId, trackingCode, hasFollowUp = false) {
+  if (!hasFollowUp) {
+    if (!confirm("Psikolog tidak/belum menandai (mencentang) perlunya sesi lanjutan untuk laporan ini.\n\nApakah Anda yakin tetap ingin menjadwalkan sesi lanjutan?")) {
+      return; // Batalkan aksi jika admin memilih cancel
+    }
+  }
+
   _schedReportId = reportId;
   _schedSelectedPsikologId = null;
 

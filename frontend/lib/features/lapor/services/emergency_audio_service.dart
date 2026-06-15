@@ -127,6 +127,20 @@ class EmergencyAudioService {
     _playedAudioIds.clear();
     _playlist.clear();
 
+    _audioPlayer.setAudioContext(AudioContext(
+      iOS: AudioContextIOS(
+        category: AVAudioSessionCategory.playback,
+        options: const {AVAudioSessionOptions.mixWithOthers},
+      ),
+      android: AudioContextAndroid(
+        isSpeakerphoneOn: true,
+        stayAwake: true,
+        contentType: AndroidContentType.music,
+        usageType: AndroidUsageType.media,
+        audioFocus: AndroidAudioFocus.gain,
+      ),
+    ));
+
     _playerCompleteSubscription?.cancel();
     _playerCompleteSubscription = _audioPlayer.onPlayerComplete.listen((event) {
       _playNextInPlaylist();
@@ -146,7 +160,7 @@ class EmergencyAudioService {
     try {
       final resp = await ApiService.instance.get('/api/emergency/audio?incident_id=$_listeningIncidentId');
       if (resp.success && resp.data != null) {
-        final audios = resp.data!['data'] as List? ?? [];
+        final audios = resp.data!['data']?['data'] as List? ?? [];
         bool addedNew = false;
 
         for (var audio in audios) {
@@ -155,7 +169,11 @@ class EmergencyAudioService {
             _playedAudioIds.add(id);
             // rawPath sudah berisi "audio_records/filename.m4a", jadi langsung gabungkan
             final rawPath = audio['file_path']?.toString() ?? '';
-            final url = '${ApiService.instance.baseUrl}/$rawPath';
+            final baseUrl = ApiService.instance.baseUrl.endsWith('/') 
+                ? ApiService.instance.baseUrl.substring(0, ApiService.instance.baseUrl.length - 1) 
+                : ApiService.instance.baseUrl;
+            final cleanPath = rawPath.startsWith('/') ? rawPath.substring(1) : rawPath;
+            final url = '$baseUrl/$cleanPath';
             _playlist.add(url);
             addedNew = true;
           }

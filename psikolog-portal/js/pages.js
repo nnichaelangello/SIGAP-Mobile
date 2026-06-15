@@ -75,7 +75,20 @@ const Pages = {
               <td>${a.user_nama}</td>
               <td>${Pages.badgeStatus(a.status)}</td>
               <td>
-                <button class="btn-primary btn-sm" onclick="showSessionNote(${a.id})">📝 Catatan Sesi</button>
+                <div style="display:flex;gap:4px;">
+                  ${a.status === 'menunggu_psikolog' ? `
+                    <button class="btn-success btn-sm" onclick="acceptAppointment(${a.id}, '${a.tipe_lokasi}')">Terima</button>
+                    <button class="btn-danger btn-sm" onclick="rejectAppointment(${a.id})">Tolak</button>
+                  ` : ''}
+                  ${a.status === 'diterima' ? `
+                    <button class="btn-primary btn-sm" onclick="showSessionNote(${a.id})">Catatan</button>
+                    <button class="btn-success btn-sm" onclick="completeAppointment(${a.id})">Selesai</button>
+                    <button class="btn-danger btn-sm" onclick="noShowAppointment(${a.id})">No-Show</button>
+                  ` : ''}
+                  ${a.status === 'selesai' ? `
+                    <button class="btn-primary btn-sm" onclick="showSessionNote(${a.id})">Lihat Catatan</button>
+                  ` : ''}
+                </div>
               </td>
             </tr>
           `).join('')}
